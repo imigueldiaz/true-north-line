@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_background">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/cameraButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:importantForAccessibility="no"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <org.imigueldiaz.northline.NorthLineView
+        android:id="@+id/northLineView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/locationAltitudeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/teal_700"
+        android:backgroundTint="#00BCD4"
+        android:hapticFeedbackEnabled="true"
+        android:padding="10dp"
+        android:text="@string/LOCATION_ALTITUDE"
+        android:textColor="#eeeeee"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/accuracyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="@string/GPS_ACCURACY_UNKNOWN"
+        android:textColor="#00FF00"
+        android:textSize="18sp"
+        android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/declinationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="48dp"
+        android:text="@string/MAGNETIC_DECLINATION_NOT_CALCULATED"
+        android:textColor="#eeeeee"
+        android:textSize="18sp"
+        android:padding="16dp"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

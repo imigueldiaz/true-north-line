@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NorthLine</string>
+    <string name="MAGNETIC_DECLINATION">Magnetic Declination: %.2f°</string>
+    <string name="MAGNETIC_DECLINATION_NOT_CALCULATED">Magnetic Declination…</string>
+    <string name="GPS_ACCURACY">GPS accuracy: %.2f</string>
+    <string name="GPS_ACCURACY_UNKNOWN">GPS accuracy…</string>
+    <string name="LOCATION_ALTITUDE">Location &amp; Altitude</string>
+</resources>
