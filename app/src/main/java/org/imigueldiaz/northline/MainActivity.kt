@@ -296,11 +296,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
     }
 
     private fun convertToDMS(degrees: Double): String {
-        val degree = degrees.toInt()
-        val minutes = ((abs(degrees) - degree) * 60).toInt()
-        val seconds = (((abs(degrees) - degree) * 60) - minutes) * 60
+        val degreesAbs = abs(degrees)
+        var degree = degreesAbs.toInt()
+        var minutesFull = (degreesAbs - degree) * 60
+        var minutes = minutesFull.toInt()
+        val seconds = (minutesFull - minutes) * 60
 
-        return String.format("%d°%d'%s\"", degree, minutes, String.format("%.2f", seconds))
+        // Ajustar grados y minutos si los minutos son >= 60
+        if (minutes >= 60) {
+            degree += minutes / 60
+            minutes %= 60
+        }
+
+        // Añadir signo a los grados basado en el valor original
+        val degreesFormatted = if (degrees < 0) "-$degree" else "$degree"
+
+        return String.format("%s° %d' %s\"", degreesFormatted, minutes, String.format("%.2f", seconds))
     }
 
     /**
