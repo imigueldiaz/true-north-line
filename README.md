@@ -2,6 +2,9 @@
 
 North Line  is a small Android application developed with the primary purpose of learning Kotlin and creating a tool to locate true north for aligning an equatorial mount. The app utilizes the device's camera and sensors to provide an accurate estimation of the true north direction.
 
+**Note:** This project is a work in progress and is not yet ready for production use. The app is currently in the early stages of development, and additional features and improvements are planned for future releases.
+
+
 ## Features
 
 - Utilizes the device's camera preview to display the surrounding environment
