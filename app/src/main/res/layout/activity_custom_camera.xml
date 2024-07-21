@@ -19,13 +19,15 @@
         android:id="@+id/locationAltitudeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/declinationTextView"
+        android:layout_marginBottom="16dp"
         android:layout_gravity="center"
-        android:background="@color/teal_700"
-        android:backgroundTint="#00BCD4"
+        android:textAlignment="center"
+        android:background="#115251"
         android:hapticFeedbackEnabled="true"
         android:padding="10dp"
         android:text="@string/LOCATION_ALTITUDE"
-        android:textColor="#eeeeee"
+        android:textColor="#ffffff"
         android:textSize="14sp" />
 
     <TextView
