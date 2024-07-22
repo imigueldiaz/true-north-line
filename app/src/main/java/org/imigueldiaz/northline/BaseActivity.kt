@@ -32,13 +32,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.math.abs
 
 abstract class BaseActivity : AppCompatActivity(), SensorEventListener, LocationListener {
 
 
-    private lateinit var soundPool: SoundPool
+    private val soundPool: SoundPool by lazy { initializeSoundPool() }
     private var accuracyTextView: TextView? = null
     private var azimuthGlobal = Float.NaN
     private var cachedDeclination: Float = 0f
@@ -69,14 +73,15 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
         getSystemService(SENSOR_SERVICE) as SensorManager
     }
 
+    protected val scope = CoroutineScope(Dispatchers.Main)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Request permissions if not already granted
-        requestPermissionsIfNeeded()
-
-        // Initialize SoundPool
-        initializeSoundPool()
+        scope.launch {
+            requestPermissionsIfNeeded()
+        }
 
         // Initialize UI components
         initializeUIComponents()
@@ -229,44 +234,46 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
         }
     }
 
-    private fun initializeSoundPool() {
+    private fun initializeSoundPool(): SoundPool {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
 
-        soundPool = SoundPool.Builder()
+        return SoundPool.Builder()
             .setMaxStreams(1)
             .setAudioAttributes(audioAttributes)
-            .build()
-
-        // Load the sound (assuming you have a sound file in res/raw/ping.mp3)
-        soundID = soundPool.load(this, R.raw.ping, 1)
+            .build().apply {
+                // Load the sound (assuming you have a sound file in res/raw/ping.mp3)
+                soundID = load(this@BaseActivity, R.raw.ping, 1)
+            }
     }
 
-    private fun requestPermissionsIfNeeded() {
-        // Check and request for location permission
+
+    private suspend fun requestPermissionsIfNeeded() = withContext(Dispatchers.IO) {
+        val permissionsToRequest = mutableListOf<String>()
+
         if (ContextCompat.checkSelfPermission(
-                this,
+                this@BaseActivity,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.VIBRATE),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        // Check and request for camera permission
         if (ContextCompat.checkSelfPermission(
-                this,
+                this@BaseActivity,
                 Manifest.permission.CAMERA
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            permissionsToRequest.add(Manifest.permission.CAMERA)
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_REQUEST_CODE
+                this@BaseActivity,
+                permissionsToRequest.toTypedArray(),
+                LOCATION_PERMISSION_REQUEST_CODE
             )
         }
     }
@@ -395,7 +402,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
 
     companion object {
         protected const val LOCATION_PERMISSION_REQUEST_CODE = 1
-        protected const val CAMERA_PERMISSION_REQUEST_CODE = 2
 
         // Sensitivity threshold for the azimuth
         private const val THRESHOLD = 0.00349f // 0.2 degrees
