@@ -27,6 +27,8 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -56,6 +58,8 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
     private var toneGenerator: ToneGenerator? = null
     private var vibrator: Vibrator? = null
     private val northLineView: NorthLineView by lazy { findViewById(R.id.northLineView) }
+    private val polarisLineView: View by lazy { findViewById(R.id.polarisLineView) }
+    private var pitchGlobal = Float.NaN
 
     private val vibratorManager: VibratorManager by lazy {
         getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -99,28 +103,35 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
 
         globalLocation = location
 
-        val latitude = location.latitude
-        val longitude = location.longitude
-        val altitude = location.altitude
-
-        declination = GeomagneticField(
-            latitude.toFloat(),
-            longitude.toFloat(),
-            altitude.toFloat(),
-            System.currentTimeMillis()
-        ).declination
+        updateGeomagneticField(location)
 
         //Log.d("Declination", declination.toString())
 
         runOnUiThread {
             //  Update the UI components
-            updateLocationUI(location)
-            updateDeclinationUI()
-            updateAccuracyUI(location.accuracy)
+            updateAllUI(location)
         }
 
         northLineView.invalidate()
 
+    }
+
+    private fun updateAllUI(location: Location) {
+        updateLocationUI(location)
+        updateDeclinationUI()
+        updateAccuracyUI(location.accuracy)
+    }
+
+    private fun updateGeomagneticField(location: Location) {
+        globalLocation?.let {
+            val geomagneticField = GeomagneticField(
+                it.latitude.toFloat(),
+                it.longitude.toFloat(),
+                it.altitude.toFloat(),
+                System.currentTimeMillis()
+            )
+            cachedDeclination = geomagneticField.declination
+        }
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -134,6 +145,11 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
             }
 
             azimuthGlobal = azimuth
+
+            val pitchRadians = orientationAngles[1] // Pitch in radians
+            pitchGlobal = Math.toDegrees(pitchRadians.toDouble()).toFloat() // Convert to degrees
+
+            Log.d(TAG, "Orientation Angles: Azimuth: ${Math.toDegrees(orientationAngles[0].toDouble())}, Pitch: $pitchGlobal, Roll: ${Math.toDegrees(orientationAngles[2].toDouble())}")
 
             if (lastX == null || lastY == null || lastZ == null) {
                 lastX = orientationAngles[0]
@@ -169,6 +185,24 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
                 } else if (abs(azimuth - declination) <= THRESHOLD) {
                     exactPing()
                 }
+            }
+        }
+        updatePolarisLineVisibility()
+    }
+
+    private fun updatePolarisLineVisibility() {
+        globalLocation?.let {
+            val polarisAngle = it.latitude.toFloat()
+            Log.d(TAG, "Polaris Angle: $polarisAngle")
+            Log.d(TAG, "Current Pitch: $pitchGlobal")
+            Log.d(TAG, "Difference: ${abs(pitchGlobal - polarisAngle)}")
+
+            if (abs(pitchGlobal - polarisAngle) < TOLERANCE_DEGREES) {
+                polarisLineView.visibility = View.VISIBLE
+                Log.d(TAG, "Polaris line visible")
+            } else {
+                polarisLineView.visibility = View.GONE
+                Log.d(TAG, "Polaris line hidden")
             }
         }
     }
@@ -319,11 +353,11 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
      * Update the declination UI
      */
     private fun updateDeclinationUI() {
-        val declinationDirection = if (declination > 0) "E" else "O"
-        val declinationText = if (!declination.isNaN()) {
+        val declinationDirection = if (cachedDeclination > 0) "E" else "O"
+        val declinationText = if (!cachedDeclination.isNaN()) {
             String.format(
                 getString(R.string.MAGNETIC_DECLINATION) + " $declinationDirection",
-                declination
+                cachedDeclination
             )
         } else {
             String.format(getString(R.string.MAGNETIC_DECLINATION_NOT_CALCULATED))
@@ -405,6 +439,8 @@ abstract class BaseActivity : AppCompatActivity(), SensorEventListener, Location
 
         // Sensitivity threshold for the azimuth
         private const val THRESHOLD = 0.00349f // 0.2 degrees
+        private const val TOLERANCE_DEGREES = 0.5f
+        private const val TAG = "BaseActivity"
     }
 
 }

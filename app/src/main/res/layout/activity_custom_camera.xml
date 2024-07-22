@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/cardview_dark_background">
 
     <TextureView
@@ -49,5 +50,22 @@
         android:textColor="#eeeeee"
         android:textSize="18sp"
         android:padding="16dp"/>
+    <!-- Horizontal line for Polaris -->
+    <View
+        android:id="@+id/polarisLineView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_blue_light"
+        android:visibility="gone" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/returnButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/RETURN"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

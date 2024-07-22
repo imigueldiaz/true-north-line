@@ -20,6 +20,7 @@ import android.view.TextureView
 import android.view.TextureView.SurfaceTextureListener
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,6 +61,11 @@ class CustomCameraActivity : BaseActivity() {
             override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean = false
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+        }
+
+        val returnButton: FloatingActionButton = findViewById(R.id.returnButton)
+        returnButton.setOnClickListener {
+            finish() // Finish the current activity to return to MainActivity
         }
     }
 

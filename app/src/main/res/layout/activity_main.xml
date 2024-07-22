@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_margin="16dp"
-        android:importantForAccessibility="no"
+        android:contentDescription="@string/USE_CAMERA"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <org.imigueldiaz.northline.NorthLineView
@@ -42,7 +42,14 @@
         android:textColor="#00FF00"
         android:textSize="18sp"
         android:padding="16dp"/>
-
+    <!-- Horizontal line for Polaris -->
+    <View
+        android:id="@+id/polarisLineView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_blue_light"
+        android:visibility="gone" />
     <TextView
         android:id="@+id/declinationTextView"
         android:layout_width="wrap_content"

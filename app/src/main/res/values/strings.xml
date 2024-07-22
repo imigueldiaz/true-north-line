@@ -5,4 +5,6 @@
     <string name="GPS_ACCURACY">GPS accuracy: %.2f</string>
     <string name="GPS_ACCURACY_UNKNOWN">GPS accuracy…</string>
     <string name="LOCATION_ALTITUDE">Location &amp; Altitude</string>
+    <string name="RETURN">Return</string>
+    <string name="USE_CAMERA">Use the camera</string>
 </resources>
