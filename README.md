@@ -24,11 +24,9 @@ To run the True North Finder app on your Android device, follow these steps:
 ```bash
 git clone https://github.com/imigueldiaz/true-north-line.git
 ```
-
-
 2. Open the project in Android Studio.
 
-3. Connect your Android device to your computer via USB.
+3. Connect your Android device to your computer via USB or WiFi.
 
 4. Build and run the app on your connected device using Android Studio.
 
